@@ -1,10 +1,7 @@
 FROM httpd
 
-LABEL email="rpjadhav96@gmail.com"
-
 MAINTAINER Rahul Jadhav
 
-WORKDIR /home/dockerfile
+LABEL email="rpjadhav96@gmail.com"
 
-COPY . /var/www/html
-
+COPY . /usr/local/apache2/htdocs/
