@@ -1,4 +1,4 @@
-FROM httpd:latest
+FROM bitnami/apache
 
 LABEL email="rpjadhav96@gmail.com"
 
