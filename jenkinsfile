@@ -1,0 +1,54 @@
+pipeline{
+
+	agent any
+
+	environment {
+		DOCKERHUB_CREDENTIALS=credentials('DOCKER_HUB_DETAILS')
+	}
+
+	stages {
+	    
+	    stage('gitclone') {
+
+			steps {
+				git 'https://github.com/rahuljadhav96/Project01.git'
+			}
+		}
+
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t rpjadhav96/mywebpage:v1 .'
+			}
+		}
+
+		stage('Login') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push') {
+
+			steps {
+				sh 'docker push rpjadhav96/mywebpage:v1'
+			}
+		}
+
+		stage('k8s deployment') {
+			steps {
+				withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'k8s', namespace: '', serverUrl: '') {
+                	sh 'kubectl apply -f deployment.yaml'
+		        }
+			}
+		}
+	}
+
+	post {
+		always {
+			sh 'docker logout'
+		}
+	}
+
+}
